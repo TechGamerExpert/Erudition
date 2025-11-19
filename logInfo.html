@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log Info</title>
+    <style>
+        
+        body { font-family: sans-serif; background-color: #0d0124; color: #d8c2ff; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; }
+        .form-container { background-color: #2e0854; padding: 30px; border-radius: 8px; box-shadow: 0 0 20px #a185e7; }
+        label, input, button { display: block; margin-bottom: 15px; }
+        input[type="text"] { width: 250px; padding: 10px; border: 1px solid #7c4cff; background-color: #1a023b; color: #d8c2ff; border-radius: 4px; }
+        button { padding: 10px 20px; background-color: #7c4cff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background-color: #9e75ff; }
+       
+        #message { margin-top: 25px; padding: 15px; border-radius: 5px; text-align: center; }
+        .success { color: lightgreen; background-color: rgba(46, 8, 84, 0.5); border: 1px solid lightgreen; }
+        .instruction { font-weight: bold; color: #ffda7c; margin-top: 15px; }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>THE PARTICIPANTS</h2>
+        <form id="participantForm">
+            <label for="fullName">Full Name:</label>
+            <input type="text" id="fullName" required>
+
+            <label for="discordIgn">Discord IGN (e.g., user#1234 or @username):</label>
+            <input type="text" id="discordIgn" required>
+
+            <button type="submit">Submit and Enter</button>
+        </form>
+        <div id="message" style="display: none;"></div>
+    </div>
+    
+    <script>
+    
+    const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1440623961850253313/ZWXsosBOknVjojOJ39ZMS3_7Al09gWFqJ46m4pTLwBRDEk3huX7y0fzt2k4Zoj_EFd_c'; 
+    const NEXT_PAGE_LINK = 'techgamerexpert.github.io/starting.html'; // Your actual final destination link
+
+    const form = document.getElementById('participantForm');
+    const messageDiv = document.getElementById('message');
+
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault(); 
+
+        const fullName = document.getElementById('fullName').value;
+        const discordIgn = document.getElementById('discordIgn').value;
+
+        messageDiv.style.display = 'block';
+        messageDiv.textContent = 'Submitting data to the ancient archives...';
+        messageDiv.className = '';
+
+        const discordPayload = {
+            username: "The Erudition Gateway",
+            content: `A new participant has been logged!`,
+            embeds: [
+                {
+                    title: "NEW PARTICIPANT LOGGED",
+                    color: 3447003, // Blue
+                    fields: [
+                        { name: "Name", value: fullName, inline: true },
+                        { name: "Discord IGN", value: discordIgn, inline: true }
+                    ],
+                    timestamp: new Date().toISOString()
+                }
+            ]
+        };
+
+        try {
+            // 2. Send data to Discord
+            const discordResponse = await fetch(DISCORD_WEBHOOK_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(discordPayload),
+            });
+
+            // 3. Handle the response and show instructions
+            if (discordResponse.ok) {
+                console.log('Successfully sent data to Discord.');
+                
+                // Construct the success message with instructions
+                messageDiv.className = 'success';
+                messageDiv.innerHTML = `
+                    **SUCCESS! Welcome, ${fullName}.**<br><br>
+                    <span class="instruction">
+                        **DO NOT FILL THIS FORM AGAIN AND AGAIN.**<br>
+                        Your next link is: 
+                        <a href="${NEXT_PAGE_LINK}" target="_blank" style="color: #ff7cff;">${NEXT_PAGE_LINK}</a><br>
+                        **SAVE THIS LINK NOW!**
+                    </span>
+                `;
+                form.reset(); 
+            } else {
+                console.error('Discord Webhook failed with status:', discordResponse.status);
+                messageDiv.className = '';
+                messageDiv.style.color = 'red';
+                messageDiv.textContent = 'Error: Failed to submit data. Please check the Webhook URL.';
+            }
+        } catch (error) {
+            console.error('Network Error:', error);
+            messageDiv.className = '';
+            messageDiv.style.color = 'red';
+            messageDiv.textContent = 'Error: Check your network connection.';
+        }
+    });
+</script>
+    </script>
+</body>
+</html>
