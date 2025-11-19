@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Erudition - Secrets of the Universe</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=UnifrakturCook:wght@700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* General page styling */
+        body {
+            font-family: sans-serif;
+            /* Deep Space/Cosmic Background */
+            background-color: #0d0124; 
+            /* Radial gradient to mimic a distant nebula or energy source */
+            background-image: radial-gradient(circle at center, #2e0854 0%, #0d0124 70%);
+            color: #d8c2ff; /* Pale violet/white text */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+        }
+
+        /* Styling for the main header text (Mystical Script) */
+        .header-text {
+            font-family: 'UnifrakturCook', cursive;
+            font-weight: 700;
+            font-size: 5.5em; 
+            color: #ffffff; /* Bright white/light source */
+            margin-bottom: 50px;
+            /* Glow effect to look otherworldly/ethereal */
+            text-shadow: 0 0 10px #d8c2ff, 0 0 20px #a185e7, 0 0 30px #4a2180;
+            letter-spacing: 5px;
+            text-transform: capitalize; /* Keep the original capitalization of the script font */
+        }
+        
+        /* A subtle animation for an ethereal breathing effect on the title */
+        @keyframes pulse {
+            0% { opacity: 0.8; }
+            50% { opacity: 1.0; }
+            100% { opacity: 0.8; }
+        }
+        .header-text {
+            animation: pulse 4s infinite ease-in-out;
+        }
+
+
+        /* Styling for the button (Portal/Energy Conduit look) */
+        .continue-button {
+            padding: 18px 40px;
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #0d0124; /* Dark text */
+            background-color: #d8c2ff; /* Light, glowing color */
+            border: 3px solid #7c4cff; /* Energy border */
+            border-radius: 10px;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: background-color 0.3s, box-shadow 0.3s, transform 0.1s;
+            text-decoration: none; 
+            box-shadow: 0 0 15px #a185e7; /* Inner glow */
+        }
+
+        /* Hover effect for the button */
+        .continue-button:hover {
+            background-color: #ffffff; 
+            box-shadow: 0 0 25px #ff7cff; /* Stronger glow on hover */
+            transform: scale(1.05); /* Slight expansion */
+        }
+        
+        /* Active (click) effect for the button */
+        .continue-button:active {
+            background-color: #d8c2ff;
+            transform: scale(1.0);
+        }
+    </style>
+</head>
+<body>
+    
+    <h1 class="header-text">Welcome to THE ERUDITION</h1>
+    
+    <a href="logInfo.html" class="continue-button">
+        Get Started
+    </a>
+
+</body>
+</html>
