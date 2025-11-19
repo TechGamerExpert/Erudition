@@ -36,7 +36,7 @@
     <script>
     
     const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1440623961850253313/ZWXsosBOknVjojOJ39ZMS3_7Al09gWFqJ46m4pTLwBRDEk3huX7y0fzt2k4Zoj_EFd_c'; 
-    const NEXT_PAGE_LINK = 'techgamerexpert.github.io/starting.html'; // Your actual final destination link
+    const NEXT_PAGE_LINK = 'https://techgamerexpert.github.io/starting.html'; 
 
     const form = document.getElementById('participantForm');
     const messageDiv = document.getElementById('message');
@@ -68,18 +68,18 @@
         };
 
         try {
-            // 2. Send data to Discord
+            
             const discordResponse = await fetch(DISCORD_WEBHOOK_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(discordPayload),
             });
 
-            // 3. Handle the response and show instructions
+           
             if (discordResponse.ok) {
                 console.log('Successfully sent data to Discord.');
                 
-                // Construct the success message with instructions
+
                 messageDiv.className = 'success';
                 messageDiv.innerHTML = `
                     **SUCCESS! Welcome, ${fullName}.**<br><br>
