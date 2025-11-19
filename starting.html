@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Learner's Dreamplace</title>
+    <style>
+        /* --- 1. CSS for Plain, White, Monospaced, Calm Look --- */
+        body {
+            background-color: #000; /* Black background for contrast */
+            color: #fff; /* Plain white text */
+            font-family: 'Courier New', Courier, monospace; /* Monospaced font */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        #welcome-text {
+            white-space: pre-wrap; /* Allows text to wrap while maintaining spacing */
+            font-size: 1.2em;
+            opacity: 0; /* Starts hidden for the typewriter effect */
+            border-right: 2px solid rgba(255, 255, 255, 0.75); /* Simple cursor effect */
+            animation: blink-caret .75s step-end infinite; /* Cursor blinking */
+            min-height: 1.5em; /* Prevents layout shift */
+        }
+
+        /* Cursor Blinking Animation (Calm Look) */
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: rgba(255, 255, 255, 0.75); }
+        }
+
+        /* --- 2. CSS for the Button --- */
+        #continue-button {
+            display: none; /* Starts hidden */
+            margin-top: 30px;
+            padding: 10px 20px;
+            background-color: transparent;
+            color: #fff;
+            border: 1px solid #fff; /* Simple white border */
+            font-family: inherit;
+            font-size: 1em;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        #continue-button:hover {
+            background-color: #fff;
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+
+    <p id="welcome-text"></p>
+
+    <button id="continue-button" onclick="window.location.href='First.html'">
+        Continue to First Puzzle
+    </button>
+
+    <script>
+        // --- 3. JavaScript for Typewriter Effect ---
+        const textToType = "Hello Child. \n The Hunt was successful.\n You are now here, at the learner's dreamplace and a erudite's birthplace.\n  Prove yourself worthy and you may gain what you seek.";
+        const element = document.getElementById('welcome-text');
+        const button = document.getElementById('continue-button');
+        let charIndex = 0;
+
+        function typeWriter() {
+            if (charIndex < textToType.length) {
+                // Add the next character
+                element.textContent += textToType.charAt(charIndex);
+                charIndex++;
+                // Set a short delay for a calm effect (e.g., 50ms)
+                setTimeout(typeWriter, 50); 
+            } else {
+                // Typing is complete
+                // 1. Remove the blinking cursor effect
+                element.style.borderRight = 'none';
+                element.style.animation = 'none';
+                
+                // 2. Display the button after a slight delay
+                setTimeout(() => {
+                    button.style.display = 'block';
+                    button.style.opacity = '0';
+                    // Simple fade-in effect for the button
+                    (function fadeIn() {
+                        let opacity = parseFloat(button.style.opacity);
+                        if (opacity < 1) {
+                            opacity += 0.05;
+                            button.style.opacity = opacity;
+                            setTimeout(fadeIn, 50);
+                        }
+                    })();
+                }, 500); // Wait 0.5 seconds before showing button
+            }
+        }
+
+        // Start the effect when the page loads
+        // Also ensure the text starts visible before the typing starts
+        element.style.opacity = '1';
+        typeWriter();
+    </script>
+</body>
+</html>
