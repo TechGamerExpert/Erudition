@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>First Challenge: Worthy Proof</title>
+    <style>
+        /* Reusing the plain, white, monospaced style */
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start; /* Start content from the top */
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 50px 20px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        /* Styling the Download Button */
+        .download-button {
+            padding: 12px 25px;
+            background-color: transparent;
+            color: #fff;
+            border: 2px solid #fff;
+            font-family: inherit;
+            font-size: 1.1em;
+            cursor: pointer;
+            text-transform: uppercase;
+            text-decoration: none; /* Crucial for making the <a> tag look like a button */
+            margin-bottom: 40px;
+            display: inline-block; /* Allows padding and margin */
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .download-button:hover {
+            background-color: #fff;
+            color: #000;
+        }
+
+        /* Styling the Input Area */
+        h2 {
+            font-size: 1.5em;
+            color: #eee;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        #answer-input {
+            padding: 10px;
+            font-family: inherit;
+            font-size: 1.2em;
+            width: 80%;
+            max-width: 300px;
+            background-color: #111;
+            color: #00ff00; /* Green text for a terminal feel */
+            border: 1px solid #fff;
+            text-transform: uppercase; /* To guide the user */
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        #submit-button {
+            padding: 10px 20px;
+            background-color: transparent;
+            color: #00ff00; /* Green submit button */
+            border: 1px solid #00ff00;
+            font-family: inherit;
+            font-size: 1em;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        #submit-button:hover {
+            background-color: #00ff00;
+            color: #000;
+        }
+
+        #message {
+            margin-top: 15px;
+            color: red;
+            font-size: 1em;
+        }
+    </style>
+</head>
+<body>
+
+    <a href="https://github.com/TechGamerExpert/Erudition/raw/refs/heads/master/ASSETS/PUZZLE1.rar" 
+       download 
+       class="download-button">
+        Acquire Primary Asset
+    </a>
+
+    <h2>
+        <span style="color: red;">PROOF REQUIRED:</span><br>
+        Analyze the file to ascertain the single associated foreign word.<br>
+        **Translate the word to English, and provide your answer in all capital letters.**
+    </h2>
+
+    <input type="text" id="answer-input" placeholder="ENTER ANSWER HERE (ALL CAPS)">
+    <button id="submit-button" onclick="checkAnswer()">
+        Verify Code
+    </button>
+    
+    <p id="message"></p>
+
+    <script>
+        function checkAnswer() {
+            const correctAnswer = "LIFE"; // The required answer
+            
+            // Get the user's input, convert it to uppercase, and remove extra spaces
+            const userInput = document.getElementById('answer-input').value.trim().toUpperCase();
+            const messageElement = document.getElementById('message');
+
+            if (userInput === correctAnswer) {
+                // Correct Answer Logic
+                messageElement.style.color = 'lime';
+                messageElement.textContent = "ACCESS GRANTED. PROOF OF WORTHINESS ACCEPTED. REDIRECTING...";
+                
+                // Redirect after a short delay
+                setTimeout(() => {
+                    window.location.href = "TwoRaction.html";
+                }, 1500); // 1.5 second delay
+                
+            } else {
+                // Incorrect Answer Logic
+                messageElement.style.color = 'red';
+                messageElement.textContent = "ACCESS DENIED. THE GIVEN CODE IS INVALID. RE-EVALUATE YOUR SOLUTION.";
+                
+                // Optional: Clear the input for a fresh attempt
+                document.getElementById('answer-input').value = '';
+            }
+        }
+    </script>
+</body>
+</html>
