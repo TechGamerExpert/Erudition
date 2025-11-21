@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechFriends Pal Quiz</title>
+    
+    <style>
+        /* --- CSS Styling --- */
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #121212;
+            color: #00ff00; /* Neon green text */
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .center-container {
+            padding: 20px;
+            max-width: 800px; 
+            width: 95%;
+        }
+
+        /* --- Typewriter Effect --- */
+        #typewriter-text {
+            overflow: hidden; 
+            border-right: .15em solid #00ff00; 
+            white-space: pre-wrap; 
+            margin: 0 auto;
+            letter-spacing: .15em; 
+            display: inline-block;
+            font-size: 1.2em; 
+        }
+
+        @media (min-width: 600px) {
+            #typewriter-text { font-size: 2em; }
+        }
+        
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: #00ff00; }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        button {
+            background-color: #00ff00;
+            color: #121212;
+            border: 2px solid #00ff00;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background-color 0.3s, color 0.3s;
+            font-weight: bold;
+            text-transform: uppercase;
+            width: 100%; 
+            /* max-width: 300px; Removed to allow full width spreading */
+        }
+
+        button:hover {
+            background-color: #121212;
+            color: #00ff00;
+        }
+
+        /* Options Grid */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-top: 15px; 
+            max-width: 600px; 
+            margin-left: auto; 
+            margin-right: auto;
+        }
+
+        @media (min-width: 600px) {
+            .options-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        .option-button {
+            background-color: #1a1a1a;
+            color: #00ff00;
+            border: 1px solid #00ff00;
+            padding: 15px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: background-color 0.2s;
+            margin-top: 0;
+            width: 100%;
+            box-sizing: border-box;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .option-button:hover {
+            background-color: #00ff00;
+            color: #121212;
+        }
+
+        /* --- Match Game Styling --- */
+        .match-game-area {
+            display: flex;
+            flex-direction: column;
+            gap: 15px; 
+            margin-top: 15px; 
+        }
+
+        .column.center-column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px; 
+            padding: 0; 
+            background: transparent; 
+            border: none; 
+            box-sizing: border-box;
+        }
+        
+        /* Draggable Item Styles */
+        .draggable-item {
+            background-color: #1a1a1a;
+            color: #00ff00;
+            padding: 15px; 
+            cursor: grab;
+            font-weight: bold;
+            border: 1px solid #00ff00;
+            user-select: none;
+            touch-action: none;
+            text-align: center;
+            font-size: 1.1em; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%; 
+            height: 100%;
+            box-sizing: border-box;
+            transition: transform 0.1s, background-color 0.2s;
+        }
+
+        .draggable-item:active {
+            cursor: grabbing;
+            background-color: #003300;
+        }
+
+        /* Selected state for Tap interaction */
+        .draggable-item.selected {
+            background-color: #005500;
+            box-shadow: 0 0 10px #00ff00;
+            border: 2px dashed #fff;
+        }
+
+        /* Match Row Layout */
+        .match-row {
+            display: flex;
+            gap: 15px; 
+            align-items: stretch; 
+            justify-content: center;
+            padding: 0;
+            margin-bottom: 0; 
+            width: 100%;
+        }
+        
+        .connector {
+            font-size: 2em;
+            color: #00ff00;
+            padding: 0; 
+            user-select: none;
+            transition: transform 0.3s;
+            display: flex;
+            align-items: center;
+        }
+
+        /* Drop Zones */
+        .drop-zone {
+            flex: 1;
+            background-color: #121212;
+            border: 1px dashed #00ff00; 
+            min-height: 60px; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s, border-color 0.3s;
+            position: relative;
+            overflow: hidden; 
+        }
+        
+        .drop-zone:has(.draggable-item) {
+            border: none;
+            padding: 0;
+        }
+
+        .drop-zone .draggable-item {
+            border: 1px solid #00ff00;
+        }
+
+        .drop-zone.drag-over {
+            background-color: #002200;
+            border-color: #fff; 
+            box-shadow: 0 0 10px #00ff00;
+        }
+
+        /* --- Mobile Responsive Adjustments --- */
+        @media (max-width: 600px) {
+            .match-row {
+                flex-direction: column; /* Stack vertically */
+                gap: 5px;
+                padding: 10px;
+                border: 1px solid #333; /* Slight border to separate pairs visually */
+                margin-bottom: 10px; /* Space between stacked pairs */
+            }
+
+            .column.center-column {
+                gap: 10px; 
+            }
+
+            .connector {
+                transform: rotate(90deg); /* Rotate arrow to point down */
+                font-size: 1.5em; 
+                margin: 5px 0;
+                justify-content: center;
+            }
+
+            .draggable-item {
+                padding: 10px; 
+                font-size: 1em; 
+            }
+
+            .drop-zone {
+                width: 100%; 
+                min-height: 50px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="initial-screen" class="center-container">
+        <div id="typewriter-container">
+            <h1 id="typewriter-text"></h1>
+        </div>
+        
+        <button id="start-button" onclick="startQuiz()" class="hidden">START NOW</button>
+    </div>
+
+    <div id="quiz-container" class="center-container hidden">
+        <h2 id="question-text"></h2>
+        
+        <!-- Standard Options -->
+        <div id="options-container" class="options-grid"></div>
+
+        <!-- Match the Following Section -->
+        <div id="match-container" class="hidden">
+            <p style="font-size: 0.9em; color: #00aa00;">(Drag or Tap items to swap and match)</p>
+            
+            <div class="match-game-area">
+                <div class="column center-column" id="match-area">
+                    <!-- Match Rows injected here -->
+                </div>
+            </div>
+
+            <button onclick="checkMatchAnswer()">Submit Match</button>
+        </div>
+    </div>
+
+    <div id="completion-screen" class="center-container hidden">
+        <h2>You are truly worthy! You know your pals well.</h2>
+        <a href="FourReaction.html">
+            <button>CONTINUE TO FOURREACTION</button>
+        </a>
+    </div>
+
+    <script>
+        // --- JavaScript Logic ---
+        let currentQuestionIndex = 0;
+        let selectedElement = null; // Track tapped element
+
+        // --- Quiz Content ---
+        const quizData = [
+            {
+                question: "Q1) Who created the Art Channel in TechFriends?",
+                options: ["Vanam", "King", "Tech", "Budd"],
+                answer: "King"
+            },
+            {
+                question: 'Q2) Who is the author of these lines: "Our life itself is a joke. We always live in fool\'s day"',
+                options: ["Bruherger", "Tech", "Vanam", "Sarandise"],
+                answer: "Sarandise"
+            },
+            {
+                question: "Q3) Four members planned the 'Aaradhyaa Dare.' Who was **NOT** part of the core planning team?",
+                options: ["Vanam", "King", "Geetha", "Bruherger"],
+                answer: "Bruherger"
+            },
+            {
+                question: "Q4) Who in the server is doing one of the highest level of engineering courses in the world available to them in that age group?",
+                options: ["Vanam", "Tech", "Geetha", "Daksh"],
+                answer: "Geetha"
+            },
+            {
+                question: "Q5) Which of the following people are one of two to have paid for the first time the server's Minecraft server was paid-hosted?",
+                options: ["Hawk", "Clashy", "Wiz", "Pras"],
+                answer: "Hawk"
+            },
+            {
+                question: "Q6) Who is the oldest of the following?",
+                options: ["Daksh", "Pras", "Wiz", "Kyoko"],
+                answer: "Pras"
+            },
+            {
+                question: "Q7) Who of the following have not had a birthday song written in their honor?",
+                options: ["King", "Vanam", "Tech", "None of the Above"],
+                answer: "Tech"
+            },
+            {
+                question: 'Q8) Who was the author behind the quote, "When you kamikaze with your indian induced shit"',
+                options: ["Bruherger", "Abrar", "Tech", "Pras"],
+                answer: "Bruherger"
+            },
+            {
+                question: "Q9) Who is the person who has spent the most hours of their life gaming out of the following?",
+                options: ["Crab", "Tech", "Daksh", "Abrar"],
+                answer: "Crab"
+            }
+        ];
+
+        const matchData = {
+            Daksh: "CA",
+            Vanam: "AI/ML",
+            King: "Management",
+            Abrar: "future unemployement"
+        };
+
+        // --- DOM Elements ---
+        const initialScreen = document.getElementById('initial-screen');
+        const quizContainer = document.getElementById('quiz-container');
+        const completionScreen = document.getElementById('completion-screen');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const matchContainer = document.getElementById('match-container');
+        const typewriterElement = document.getElementById('typewriter-text');
+        const startButton = document.getElementById('start-button');
+        const matchArea = document.getElementById('match-area');
+
+        // --- Initialization & Typewriter Effect ---
+        const initialMessage = "Let's see how well you know your pals.\n\nKnowing your pals is a key part of knowing the universe.";
+        
+        function typeWriter(element, text, speed) {
+            let i = 0;
+            element.innerHTML = '';
+            element.style.animation = 'none'; 
+            startButton.classList.add('hidden'); 
+
+            const chars = text.split('');
+            
+            function type() {
+                if (i < chars.length) {
+                    const char = chars[i];
+                    if (char === '\n') {
+                        element.innerHTML += '<br>';
+                    } else {
+                        element.innerHTML += char;
+                    }
+                    i++;
+                    setTimeout(type, speed);
+                } else {
+                    element.style.animation = 'blink-caret .75s step-end infinite'; 
+                    startButton.classList.remove('hidden'); 
+                }
+            }
+            type();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            typeWriter(typewriterElement, initialMessage, 40);
+        });
+
+        // --- Helper: Shuffle Array (Used for MCQs and Q10) ---
+        function shuffleArray(array) {
+            let newArray = [...array]; 
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        // --- Core Logic: Reset Function ---
+        function resetQuiz(isFailure = false) {
+            currentQuestionIndex = 0;
+            quizContainer.classList.add('hidden');
+            completionScreen.classList.add('hidden');
+            initialScreen.classList.remove('hidden');
+
+            if (isFailure) {
+                setTimeout(() => {
+                    alert("You are not worthy to continue if you do not know your pals well.");
+                    typeWriter(typewriterElement, initialMessage, 40);
+                }, 100);
+            }
+        }
+
+        // --- Quiz Start ---
+        function startQuiz() {
+            initialScreen.classList.add('hidden');
+            quizContainer.classList.remove('hidden');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            if (currentQuestionIndex === quizData.length) {
+                loadMatchQuestion();
+                return;
+            }
+
+            optionsContainer.classList.remove('hidden');
+            matchContainer.classList.add('hidden');
+
+            const currentQ = quizData[currentQuestionIndex];
+            questionText.textContent = currentQ.question;
+            optionsContainer.innerHTML = ''; 
+
+            // Randomize options for display using shuffleArray
+            const randomizedOptions = shuffleArray(currentQ.options);
+
+            randomizedOptions.forEach(option => {
+                const button = document.createElement('button');
+                button.className = 'option-button';
+                button.textContent = option;
+                button.onclick = () => checkAnswer(option, currentQ.answer);
+                optionsContainer.appendChild(button);
+            });
+        }
+
+        function checkAnswer(selectedOption, correctAnswer) {
+            if (selectedOption === correctAnswer) {
+                currentQuestionIndex++;
+                loadQuestion(); 
+            } else {
+                resetQuiz(true); 
+            }
+        }
+
+        // --- Interaction Logic: Drag & Tap ---
+        
+        function allowDrop(ev) {
+            ev.preventDefault();
+        }
+
+        function drag(ev) {
+            ev.dataTransfer.setData("text/id", ev.target.id);
+            ev.dataTransfer.setData("text/type", ev.target.dataset.type);
+        }
+
+        function drop(ev) {
+            ev.preventDefault();
+            const dataId = ev.dataTransfer.getData("text/id");
+            const dataType = ev.dataTransfer.getData("text/type");
+            const draggedElement = document.getElementById(dataId);
+            performSwap(draggedElement, ev.target);
+        }
+
+        // Unified Swap Logic for Drag and Tap
+        function performSwap(sourceElement, target) {
+            // Find valid Drop Zone parent if target is internal text
+            if (!target.classList.contains('drop-zone')) {
+                target = target.closest('.drop-zone');
+            }
+            if (!target) return; 
+
+            // Check id the name and dicibline types match
+            const sourceType = sourceElement.dataset.type;
+            const targetType = target.dataset.accept;
+            if (sourceType !== targetType) return;
+
+            // SWAP LOGIC:
+            if (target.children.length > 0) {
+                const existingItem = target.children[0];
+                const originalParent = sourceElement.parentElement;
+                originalParent.appendChild(existingItem);
+                target.appendChild(sourceElement);
+            } else {
+                target.appendChild(sourceElement);
+            }
+        }
+
+        // --- Tap to Select Logic (Mobile Friendly) ---
+        function handleTap(event) {
+            const clickedItem = event.target.closest('.draggable-item');
+            const clickedZone = event.target.closest('.drop-zone');
+
+            // Case 1: Tapped an Item
+            if (clickedItem) {
+                if (selectedElement) {
+                    if (selectedElement === clickedItem) {
+                        deselect();
+                    } else {
+                        const targetZone = clickedItem.parentElement;
+                        performSwap(selectedElement, targetZone);
+                        deselect();
+                    }
+                } else {
+                    select(clickedItem);
+                }
+                event.stopPropagation(); 
+                return;
+            }
+
+            // Case 2: Tapped an empty Zone
+            if (clickedZone && selectedElement) {
+                performSwap(selectedElement, clickedZone);
+                deselect();
+            }
+        }
+
+        function select(element) {
+            if (selectedElement) selectedElement.classList.remove('selected');
+            selectedElement = element;
+            selectedElement.classList.add('selected');
+        }
+
+        function deselect() {
+            if (selectedElement) selectedElement.classList.remove('selected');
+            selectedElement = null;
+        }
+
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.draggable-item') && !e.target.closest('.drop-zone')) {
+                deselect();
+            }
+        });
+
+        // --- Load Match Question (Q10) ---
+        function loadMatchQuestion() {
+            questionText.textContent = "Q10) Rearrange the items to match the person to their discipline.";
+            optionsContainer.classList.add('hidden');
+            matchContainer.classList.remove('hidden');
+            
+            matchArea.innerHTML = '';
+
+            const persons = Object.keys(matchData);
+            const disciplines = Object.values(matchData);
+
+            // Explicitly shuffle both arrays to ensure random start
+            const shuffledPersons = shuffleArray(persons);
+            const shuffledDisciplines = shuffleArray(disciplines);
+
+            // Create Rows with Pre-filled Jumbled Content
+            for (let i = 0; i < persons.length; i++) {
+                const row = document.createElement('div');
+                row.className = 'match-row';
+
+                // 1. Pal Item
+                const person = shuffledPersons[i];
+                const palDiv = document.createElement('div');
+                palDiv.className = 'draggable-item';
+                palDiv.draggable = true; 
+                palDiv.textContent = person;
+                palDiv.id = 'pal-' + i;
+                palDiv.dataset.type = 'pal';
+                palDiv.ondragstart = drag;
+                palDiv.onclick = handleTap;
+
+                // Pal Drop Zone
+                const palZone = document.createElement('div');
+                palZone.className = 'drop-zone pal-zone';
+                palZone.dataset.accept = 'pal';
+                palZone.ondrop = drop;
+                palZone.ondragover = allowDrop;
+                palZone.onclick = handleTap;
+                palZone.appendChild(palDiv); 
+
+                // 2. Connector Arrow
+                const connector = document.createElement('span');
+                connector.className = 'connector';
+                connector.innerHTML = '&rarr;'; 
+
+                // 3. Discipline Item
+                const disc = shuffledDisciplines[i];
+                const discDiv = document.createElement('div');
+                discDiv.className = 'draggable-item';
+                discDiv.draggable = true; 
+                discDiv.textContent = disc;
+                discDiv.id = 'disc-' + i;
+                discDiv.dataset.type = 'disc';
+                discDiv.ondragstart = drag;
+                discDiv.onclick = handleTap;
+
+                // Discipline Drop Zone
+                const discZone = document.createElement('div');
+                discZone.className = 'drop-zone disc-zone';
+                discZone.dataset.accept = 'disc';
+                discZone.ondrop = drop;
+                discZone.ondragover = allowDrop;
+                discZone.onclick = handleTap;
+                discZone.appendChild(discDiv); 
+
+                row.appendChild(palZone);
+                row.appendChild(connector);
+                row.appendChild(discZone);
+                matchArea.appendChild(row);
+            }
+        }
+
+        // --- Check Match Answer (Q10) ---
+        function checkMatchAnswer() {
+            const rows = document.querySelectorAll('.match-row');
+            let allCorrect = true;
+            let fullRows = 0;
+            const totalNeeded = Object.keys(matchData).length;
+
+            rows.forEach(row => {
+                const palZone = row.querySelector('.pal-zone');
+                const discZone = row.querySelector('.disc-zone');
+                
+                // Check if row is complete
+                if (palZone.children.length > 0 && discZone.children.length > 0) {
+                    fullRows++;
+                    const palName = palZone.children[0].textContent;
+                    const discName = discZone.children[0].textContent;
+
+                    if (matchData[palName] !== discName) {
+                        allCorrect = false;
+                    }
+                }
+            });
+
+            if (fullRows < totalNeeded) {
+                alert("Please fill all rows before submitting!");
+                return;
+            }
+
+            if (allCorrect) {
+                currentQuestionIndex++; 
+                showCompletionScreen();
+            } else {
+                resetQuiz(true); 
+            }
+        }
+
+        function showCompletionScreen() {
+            quizContainer.classList.add('hidden');
+            completionScreen.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
