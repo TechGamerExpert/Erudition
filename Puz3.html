@@ -1,1 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechFriends Pal Quiz</title>
+    
+    <style>
+        /* --- CSS Styling (style.css contents) --- */
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #121212;
+            color: #00ff00; /* Neon green text */
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
 
+        .center-container {
+            padding: 20px;
+            max-width: 600px;
+            width: 90%;
+        }
+
+        /* --- Typewriter Effect --- */
+        #typewriter-text {
+            overflow: hidden; 
+            border-right: .15em solid orange; 
+            white-space: nowrap; 
+            margin: 0 auto;
+            letter-spacing: .15em; 
+            /* Initial animation defined in JS, using this for structure */
+            display: inline-block;
+        }
+        /* Keyframes are placed here for CSS context */
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: orange; }
+        }
+        /* --- End Typewriter Effect --- */
+
+        .hidden {
+            display: none !important;
+        }
+
+        button {
+            background-color: #00ff00;
+            color: #121212;
+            border: 2px solid #00ff00;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.3s, color 0.3s;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #121212;
+            color: #00ff00;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .option-button {
+            background-color: #333;
+            color: #00ff00;
+            border: 1px solid #00ff00;
+            padding: 10px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.2s;
+        }
+
+        .option-button:hover {
+            background-color: #00ff00;
+            color: #121212;
+        }
+
+        /* Styling for the Match the Following table */
+        #match-table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+
+        #match-table th, #match-table td {
+            border: 1px solid #00ff00;
+            padding: 10px;
+        }
+
+        .dropdown-select {
+            background-color: #121212;
+            color: #00ff00;
+            border: 1px solid #00ff00;
+            padding: 5px;
+            width: 100%; /* Ensure dropdowns fill the cell */
+        }
+    </style>
+</head>
+<body>
+
+    <div id="initial-screen" class="center-container">
+        <h1 id="typewriter-text"></h1>
+        
+        <button id="start-button" onclick="startQuiz()" class="hidden">START NOW</button>
+    </div>
+
+    <div id="quiz-container" class="center-container hidden">
+        <h2 id="question-text"></h2>
+        
+        <div id="options-container" class="options-grid">
+            </div>
+
+        <div id="match-container" class="hidden">
+            <table id="match-table">
+                <thead>
+                    <tr>
+                        <th>Person</th>
+                        <th>Discipline</th>
+                    </tr>
+                </thead>
+                <tbody id="match-body">
+                    </tbody>
+            </table>
+            <button onclick="checkMatchAnswer()">Submit Match</button>
+        </div>
+    </div>
+
+    <div id="completion-screen" class="center-container hidden">
+        <h2>You are truly worthy! You know your pals well.</h2>
+        <a href="FourReaction.html">
+            <button>CONTINUE TO FOURREACTION</button>
+        </a>
+    </div>
+
+    <script>
+        // --- JavaScript Logic (script.js contents) ---
+        let currentQuestionIndex = 0;
+
+        // --- Quiz Content ---
+        const quizData = [
+            {
+                question: "Q1) Who created the Art Channel in TechFriends?",
+                options: ["Vanam", "King", "Tech", "Budd"],
+                answer: "King"
+            },
+            {
+                question: 'Q2) Who is the author of these lines: "Our life itself is a joke. We always live in fool\'s day"',
+                options: ["Bruherger", "Tech", "Vanam", "Sarandise"],
+                answer: "Sarandise"
+            },
+            {
+                // Rewritten for clarity but keeping the subtle NOT
+                question: "Q3) Four members planned the 'Aaradhyaa Dare.' Who was **NOT** part of the core planning team?",
+                options: ["Vanam", "King", "Geetha", "Bruherger"],
+                answer: "Bruherger"
+            },
+            {
+                question: "Q4) Who in the server is doing one of the highest level of engineering courses in the world available to them in that age group?",
+                options: ["Vanam", "Tech", "Geetha", "Daksh"],
+                answer: "Geetha"
+            },
+            {
+                question: "Q5) Which of the following people are one of two to have paid for the first time the server's Minecraft server was paid-hosted?",
+                options: ["Hawk", "Clashy", "Wiz", "Pras"],
+                answer: "Hawk"
+            },
+            {
+                question: "Q6) Who is the oldest of the following?",
+                options: ["Daksh", "Pras", "Wiz", "Kyoko"],
+                answer: "Pras"
+            },
+            {
+                question: "Q7) Who of the following have not had a birthday song written in their honor?",
+                options: ["King", "Vanam", "Tech", "None of the Above"],
+                answer: "Tech"
+            },
+            {
+                question: 'Q8) Who was the author behind the quote, "When you kamikaze with your indian induced shit"',
+                options: ["Bruherger", "Abrar", "Tech", "Pras"],
+                answer: "Bruherger"
+            },
+            {
+                question: "Q9) Who is the person who has spent the most hours of their life gaming out of the following?",
+                options: ["Crab", "Tech", "Daksh", "Abrar"],
+                answer: "Crab"
+            }
+        ];
+
+        const matchData = {
+            Daksh: "CA",
+            Vanam: "AI/ML",
+            King: "Management",
+            Abrar: "future unemployement"
+        };
+
+        // --- DOM Elements ---
+        const initialScreen = document.getElementById('initial-screen');
+        const quizContainer = document.getElementById('quiz-container');
+        const completionScreen = document.getElementById('completion-screen');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const matchContainer = document.getElementById('match-container');
+        const matchBody = document.getElementById('match-body');
+        const typewriterElement = document.getElementById('typewriter-text');
+        const startButton = document.getElementById('start-button');
+
+        // --- Initialization & Typewriter Effect ---
+        const initialMessage = "Let's see how well you know your pals... Knowing your pals is a key part of knowing the universe.";
+        
+        function typeWriter(element, text, speed) {
+            let i = 0;
+            element.innerHTML = '';
+            // Reset CSS animation properties for immediate JS control
+            element.style.animation = 'none'; 
+            startButton.classList.add('hidden'); // Hide button until text is done
+
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                } else {
+                     // Add the blinking cursor animation after typing is complete
+                    element.style.animation = 'blink-caret .75s step-end infinite'; 
+                    startButton.classList.remove('hidden'); // Show button when done
+                }
+            }
+            type();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            typeWriter(typewriterElement, initialMessage, 50);
+        });
+
+        // --- Core Logic: Reset Function ---
+        function resetQuiz(isFailure = false) {
+            currentQuestionIndex = 0;
+            quizContainer.classList.add('hidden');
+            completionScreen.classList.add('hidden');
+            initialScreen.classList.remove('hidden');
+
+            if (isFailure) {
+                alert("You are not worthy to continue if you do not know your pals well.");
+                // Re-trigger the typewriter effect for the message
+                typeWriter(typewriterElement, initialMessage, 50);
+            }
+        }
+
+        // --- Quiz Start ---
+        function startQuiz() {
+            initialScreen.classList.add('hidden');
+            quizContainer.classList.remove('hidden');
+            loadQuestion();
+        }
+
+        // --- Load Question (Q1-Q9) ---
+        function loadQuestion() {
+            // Check if Q10 (Match) needs to be loaded
+            if (currentQuestionIndex === quizData.length) {
+                loadMatchQuestion();
+                return;
+            }
+
+            // Hide Q10 interface if we're on Q1-Q9
+            optionsContainer.classList.remove('hidden');
+            matchContainer.classList.add('hidden');
+
+            const currentQ = quizData[currentQuestionIndex];
+            questionText.textContent = currentQ.question;
+            optionsContainer.innerHTML = ''; // Clear previous options
+
+            currentQ.options.forEach(option => {
+                const button = document.createElement('button');
+                button.className = 'option-button';
+                button.textContent = option;
+                button.onclick = () => checkAnswer(option, currentQ.answer);
+                optionsContainer.appendChild(button);
+            });
+        }
+
+        // --- Check Answer (Q1-Q9) ---
+        function checkAnswer(selectedOption, correctAnswer) {
+            if (selectedOption === correctAnswer) {
+                currentQuestionIndex++;
+                if (currentQuestionIndex > quizData.length) { // Check for completion after Q10
+                     showCompletionScreen();
+                } else {
+                    loadQuestion();
+                }
+            } else {
+                resetQuiz(true); // Incorrect answer resets the ENTIRE quiz
+            }
+        }
+
+        // --- Load Match Question (Q10) ---
+        function loadMatchQuestion() {
+            questionText.textContent = "Q10) Link the person to their profession/choice of discipline (Match the following).";
+            optionsContainer.classList.add('hidden');
+            matchContainer.classList.remove('hidden');
+            matchBody.innerHTML = ''; // Clear previous rows
+
+            const persons = Object.keys(matchData);
+            const disciplines = Object.values(matchData);
+            
+            // Function to shuffle an array
+            function shuffleArray(array) {
+                // Creates a shallow copy so the original array is not modified
+                let newArray = [...array]; 
+                for (let i = newArray.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+                }
+                return newArray;
+            }
+
+            // Shuffle the disciplines for the dropdown options
+            const shuffledDisciplines = shuffleArray(disciplines);
+
+            persons.forEach(person => {
+                const row = matchBody.insertRow();
+                
+                // 1. Person Column
+                const personCell = row.insertCell();
+                personCell.textContent = person;
+                
+                // 2. Dropdown/Discipline Column
+                const disciplineCell = row.insertCell();
+                const select = document.createElement('select');
+                select.className = 'dropdown-select';
+                select.setAttribute('data-person', person); // Store the person's name for checking
+                
+                // Add a default unselected option
+                const defaultOption = document.createElement('option');
+                defaultOption.value = "";
+                defaultOption.textContent = "Select Discipline";
+                select.appendChild(defaultOption);
+
+                // Add shuffled discipline options
+                shuffledDisciplines.forEach(discipline => {
+                    const option = document.createElement('option');
+                    option.value = discipline;
+                    option.textContent = discipline;
+                    select.appendChild(option);
+                });
+
+                disciplineCell.appendChild(select);
+            });
+        }
+
+        // --- Check Match Answer (Q10) ---
+        function checkMatchAnswer() {
+            const selects = document.querySelectorAll('#match-body .dropdown-select');
+            let allCorrect = true;
+
+            selects.forEach(select => {
+                const person = select.getAttribute('data-person');
+                const selectedDiscipline = select.value;
+                const correctDiscipline = matchData[person];
+
+                // Check if an option was selected AND if it matches the correct answer
+                if (selectedDiscipline === "" || selectedDiscipline !== correctDiscipline) {
+                    allCorrect = false;
+                }
+            });
+
+            if (allCorrect) {
+                currentQuestionIndex++; // Move past Q10
+                showCompletionScreen();
+            } else {
+                resetQuiz(true); // Incorrect answer resets the ENTIRE quiz
+            }
+        }
+
+        // --- Quiz Completion ---
+        function showCompletionScreen() {
+            quizContainer.classList.add('hidden');
+            completionScreen.classList.remove('hidden');
+        }
+    </script>
+</body>
+  </html>
+  
