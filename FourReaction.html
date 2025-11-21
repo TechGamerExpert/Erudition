@@ -1,1 +1,124 @@
-TBD
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fourth Interaction: The Eternal Loop</title>
+    <style>
+        /* --- 1. Base CSS for Aesthetic --- */
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        #interaction-text {
+            white-space: pre-wrap; 
+            font-size: 1.2em;
+            opacity: 0;
+            border-right: 2px solid rgba(255, 255, 255, 0.75); /* Cursor */
+            animation: blink-caret .75s step-end infinite;
+            min-height: 1.5em; 
+            max-width: 800px;
+        }
+
+        /* Cursor Blinking Animation */
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: rgba(255, 255, 255, 0.75); }
+        }
+
+        /* --- 2. CSS for the Button --- */
+        #continue-button {
+            display: none; 
+            margin-top: 30px;
+            padding: 10px 20px;
+            background-color: transparent;
+            color: #fff;
+            border: 1px solid #fff; 
+            font-family: inherit;
+            font-size: 1em;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        #continue-button:hover {
+            background-color: #fff;
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+
+    <p id="interaction-text"></p>
+
+    <button id="continue-button" onclick="window.location.href='Puzzy5.html'">
+        Approach the Fifth Trial
+    </button>
+
+    <script>
+        // --- TEXT WITH EMBEDDED <br><br> TAGS ---
+        // This includes the required line breaks after every full stop.
+        const textToType = "The loop grows eternal amongst the Erudite's path.<br><br>The journey might change, but the destination remains the same.<br><br>Is it fate, or is it the devotional pathway of knowledge that overthrows one's ideals, one's love, one's experiences to happen again and again?<br><br>As the stars dim and the void grows hungrier, does anything matter?<br><br>Thus is the paradox of the Erudite, battling a war that never is won, neither is lost.<br><br>A war that is eternal, but with the hope that the phoenix shall stop its fire once assimilating the summation of all their pleas.";
+        
+        // This regex splits the text into an array of characters AND the full HTML tags (<br><br>)
+        const parts = textToType.match(/(<br><br>)|[^<]/g) || [];
+        
+        const element = document.getElementById('interaction-text');
+        const button = document.getElementById('continue-button');
+        
+        let charIndex = 0;
+        
+        function typeWriter() {
+            if (charIndex < parts.length) {
+                const part = parts[charIndex];
+                
+                if (part === '<br><br>') {
+                    // Use insertAdjacentHTML to append the <br> tags safely
+                    element.insertAdjacentHTML('beforeend', part); 
+                } else {
+                    // For characters, escape them and append safely
+                    const safeText = part.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                    element.insertAdjacentHTML('beforeend', safeText);
+                }
+
+                charIndex++;
+                setTimeout(typeWriter, 50); // Typing speed: 50ms
+            } else {
+                // Typing is complete
+                element.style.borderRight = 'none';
+                element.style.animation = 'none';
+                
+                // Display the button after a short delay (0.5s)
+                setTimeout(() => {
+                    button.style.display = 'block';
+                    button.style.opacity = '0';
+                    (function fadeIn() {
+                        let opacity = parseFloat(button.style.opacity);
+                        if (opacity < 1) {
+                            opacity += 0.05;
+                            button.style.opacity = opacity;
+                            setTimeout(fadeIn, 50);
+                        }
+                    })();
+                }, 500);
+            }
+        }
+
+        // Start the effect
+        element.style.opacity = '1';
+        typeWriter();
+    </script>
+</body>
+</html>
+
