@@ -68,10 +68,9 @@
 
     <script>
         // --- TEXT WITH EMBEDDED <br><br> TAGS ---
-        // This is the simplest way to force a visible line break during the typewriter effect.
         const textToType = "Thus all stories fade, only to be reawakened by the same void that consumed us.<br><br>But awakening the same stories also awakens the same rebellions of the people that pushed towards the rip of the fabric of galaxies.<br><br>Thus were born the Erudites, the people who dedicated their lifes to the art of resistance and knowledge of the divine.";
         
-        // This regex splits the text into an array of characters AND the full HTML tags (<br><br>)
+        // This splits the text into an array of characters AND the full HTML tags (<br><br>)
         const parts = textToType.match(/(<br><br>)|[^<]/g) || [];
         
         const element = document.getElementById('interaction-text');
@@ -84,14 +83,13 @@
                 const part = parts[charIndex];
                 
                 if (part === '<br><br>') {
-                    // If the part is the HTML tag, append it using innerHTML
-                    element.innerHTML += part; 
+                    // FIX: Use insertAdjacentHTML to append the <br> tags safely
+                    element.insertAdjacentHTML('beforeend', part); 
                 } else {
-                    // If the part is a regular character (or part of a word), append it using textContent
-                    // Note: We use innerHTML here to correctly append to existing innerHTML (if <br> was just added)
-                    // If we use textContent += part, it would overwrite the previous innerHTML tag.
-                    // This setup ensures we treat the text and the <br> tag as separate units.
-                    element.textContent += part;
+                    // FIX: Use insertAdjacentHTML and part.replace() to append text safely
+                    // We must escape HTML characters in the text (like <) before appending
+                    const safeText = part.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                    element.insertAdjacentHTML('beforeend', safeText);
                 }
 
                 charIndex++;
