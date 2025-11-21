@@ -1,1 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Second Challenge: The Enigmatic Cipher</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 50px 20px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        /* Styling for the GIF container and border */
+        .gif-container {
+            border: 3px solid #00ff00;
+            padding: 5px;
+            display: inline-block;
+            margin-bottom: 40px;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+            transition: box-shadow 0.3s ease-in-out;
+        }
+        
+        .gif-container:hover {
+            box-shadow: 0 0 25px rgba(0, 255, 0, 0.8), 0 0 50px rgba(0, 255, 0, 0.3);
+        }
+
+        #puzzle-gif {
+            max-width: 90vw;
+            height: auto;
+            display: block;
+        }
+
+        /* Styling the Question and Input Area */
+        h2 {
+            font-size: 1.5em;
+            color: #eee;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        #answer-input {
+            padding: 10px;
+            font-family: inherit;
+            font-size: 1.2em;
+            width: 80%;
+            max-width: 400px;
+            background-color: #111;
+            color: #00ff00;
+            border: 1px solid #00ff00;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        #submit-button {
+            padding: 10px 20px;
+            background-color: transparent;
+            color: #00ff00;
+            border: 1px solid #00ff00;
+            font-family: inherit;
+            font-size: 1em;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        #submit-button:hover {
+            background-color: #00ff00;
+            color: #000;
+        }
+
+        #message {
+            margin-top: 15px;
+            color: red;
+            font-size: 1em;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="gif-container">
+        <img id="puzzle-gif" src="https://github.com/TechGamerExpert/Erudition/raw/refs/heads/master/ASSETS/xor.gif" alt="Puzzle Image">
+    </div>
+
+    <h2>
+        <span style="color: red;">DECODE THE VISUAL:</span><br>
+        Extract the inherent message presented within the artifact above.<br>
+        **Provide the decoded message, devoid of spaces, in all capital letters.**
+    </h2>
+
+    <input type="text" id="answer-input" placeholder="ENTER DECODED MESSAGE HERE">
+    <button id="submit-button" onclick="checkAnswer()">
+        Validate Decryption
+    </button>
+    
+    <p id="message"></p>
+
+    <script>
+        function checkAnswer() {
+            // The required answer, already processed as "nospaces, all caps"
+            const correctAnswer = "THEERUDITIONAWAITS"; 
+            
+            // Get user input, remove spaces, convert to uppercase
+            // This handles users who type: "The Erudition Awaits", "the erudition awaits", etc.
+            const userInput = document.getElementById('answer-input').value.replace(/\s/g, '').toUpperCase();
+            const messageElement = document.getElementById('message');
+
+            if (userInput === correctAnswer) {
+                // Correct Answer Logic
+                messageElement.style.color = 'lime';
+                messageElement.textContent = "DECRYPTION SUCCESSFUL. YOUR INSIGHT IS NOTED. PREPARING FOR NEXT STAGE...";
+                
+                // Redirect to 3Inter.html
+                setTimeout(() => {
+                    window.location.href = "3Inter.html"; 
+                }, 1500); 
+                
+            } else {
+                // Incorrect Answer Logic
+                messageElement.style.color = 'red';
+                messageElement.textContent = "DECRYPTION FAILED. THE ARTIFACT'S TRUTH ELUDES YOU. RE-EVALUATE YOUR METHODOLOGY.";
+                
+                document.getElementById('answer-input').value = ''; // Clear input for retry
+            }
+        }
+    </script>
+</body>
+</html>
 
