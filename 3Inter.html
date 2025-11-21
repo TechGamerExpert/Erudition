@@ -22,7 +22,6 @@
         }
 
         #interaction-text {
-            /* Now using pre-wrap to ensure br tags work well with wrapping */
             white-space: pre-wrap; 
             font-size: 1.2em;
             opacity: 0;
@@ -68,11 +67,12 @@
     </button>
 
     <script>
-        // The text is now split by a unique marker (|||) which will be replaced by <br> tags during typing.
-        const rawText = "Thus all stories fade, only to be reawakened by the same void that consumed us.|||But awakening the same stories also awakens the same rebellions of the people that pushed towards the rip of the fabric of galaxies.|||Thus were born the Erudites, the people who dedicated their lifes to the art of resistance and knowledge of the divine.";
+        // --- TEXT WITH EMBEDDED <br><br> TAGS ---
+        // This is the simplest way to force a visible line break during the typewriter effect.
+        const textToType = "Thus all stories fade, only to be reawakened by the same void that consumed us.<br><br>But awakening the same stories also awakens the same rebellions of the people that pushed towards the rip of the fabric of galaxies.<br><br>Thus were born the Erudites, the people who dedicated their lifes to the art of resistance and knowledge of the divine.";
         
-        // This splits the text into an array of characters AND the special marker (|||)
-        const parts = rawText.match(/(\|\|\|)|[^|]/g) || [];
+        // This regex splits the text into an array of characters AND the full HTML tags (<br><br>)
+        const parts = textToType.match(/(<br><br>)|[^<]/g) || [];
         
         const element = document.getElementById('interaction-text');
         const button = document.getElementById('continue-button');
@@ -83,11 +83,14 @@
             if (charIndex < parts.length) {
                 const part = parts[charIndex];
                 
-                if (part === '|||') {
-                    // When the special marker is encountered, insert two <br> tags for a clear line break
-                    element.innerHTML += '<br><br>'; 
+                if (part === '<br><br>') {
+                    // If the part is the HTML tag, append it using innerHTML
+                    element.innerHTML += part; 
                 } else {
-                    // Otherwise, append the character normally
+                    // If the part is a regular character (or part of a word), append it using textContent
+                    // Note: We use innerHTML here to correctly append to existing innerHTML (if <br> was just added)
+                    // If we use textContent += part, it would overwrite the previous innerHTML tag.
+                    // This setup ensures we treat the text and the <br> tag as separate units.
                     element.textContent += part;
                 }
 
