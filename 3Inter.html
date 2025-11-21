@@ -22,7 +22,8 @@
         }
 
         #interaction-text {
-            white-space: pre-wrap; /* Allows text wrapping AND respects \n in the JS */
+            /* Now using pre-wrap to ensure br tags work well with wrapping */
+            white-space: pre-wrap; 
             font-size: 1.2em;
             opacity: 0;
             border-right: 2px solid rgba(255, 255, 255, 0.75); /* Cursor */
@@ -67,11 +68,11 @@
     </button>
 
     <script>
-        // The text is modified here: replace period and space with period, newline, and space (.\n )
-        const rawText = "Thus all stories fade, only to be reawakened by the same void that consumed us. But awakening the same stories also awakens the same rebellions of the people that pushed towards the rip of the fabric of galaxies. Thus were born the Erudites, the people who dedicated their lifes to the art of resistance and knowledge of the divine.";
+        // The text is now split by a unique marker (|||) which will be replaced by <br> tags during typing.
+        const rawText = "Thus all stories fade, only to be reawakened by the same void that consumed us.|||But awakening the same stories also awakens the same rebellions of the people that pushed towards the rip of the fabric of galaxies.|||Thus were born the Erudites, the people who dedicated their lifes to the art of resistance and knowledge of the divine.";
         
-        // This regex adds a newline after every period, ensuring the desired break.
-        const textToType = rawText.replace(/\.\s/g, '.\n\n'); 
+        // This splits the text into an array of characters AND the special marker (|||)
+        const parts = rawText.match(/(\|\|\|)|[^|]/g) || [];
         
         const element = document.getElementById('interaction-text');
         const button = document.getElementById('continue-button');
@@ -79,16 +80,15 @@
         let charIndex = 0;
         
         function typeWriter() {
-            if (charIndex < textToType.length) {
-                // Get the next character or sequence
-                const nextChar = textToType.charAt(charIndex);
+            if (charIndex < parts.length) {
+                const part = parts[charIndex];
                 
-                // If it's a newline, use innerHTML to render the line break
-                if (nextChar === '\n') {
-                    element.innerHTML += '<br>';
+                if (part === '|||') {
+                    // When the special marker is encountered, insert two <br> tags for a clear line break
+                    element.innerHTML += '<br><br>'; 
                 } else {
                     // Otherwise, append the character normally
-                    element.textContent += nextChar;
+                    element.textContent += part;
                 }
 
                 charIndex++;
