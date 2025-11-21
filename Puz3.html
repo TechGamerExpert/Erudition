@@ -6,7 +6,7 @@
     <title>TechFriends Pal Quiz</title>
     
     <style>
-        /* --- CSS Styling (style.css contents) --- */
+        /* --- CSS Styling --- */
         body {
             font-family: 'Courier New', Courier, monospace;
             background-color: #121212;
@@ -29,13 +29,14 @@
         #typewriter-text {
             overflow: hidden; 
             border-right: .15em solid orange; 
-            white-space: nowrap; 
+            white-space: pre-wrap; /* Allows text to wrap when typing is done */
             margin: 0 auto;
             letter-spacing: .15em; 
-            /* Initial animation defined in JS, using this for structure */
             display: inline-block;
+            font-size: 2em; /* Make the initial text larger */
         }
-        /* Keyframes are placed here for CSS context */
+        
+        /* Keyframes */
         @keyframes typing {
             from { width: 0 }
             to { width: 100% }
@@ -83,6 +84,7 @@
             cursor: pointer;
             font-size: 1em;
             transition: background-color 0.2s;
+            text-align: left;
         }
 
         .option-button:hover {
@@ -107,14 +109,16 @@
             color: #00ff00;
             border: 1px solid #00ff00;
             padding: 5px;
-            width: 100%; /* Ensure dropdowns fill the cell */
+            width: 100%; 
         }
     </style>
 </head>
 <body>
 
     <div id="initial-screen" class="center-container">
-        <h1 id="typewriter-text"></h1>
+        <div id="typewriter-container">
+            <h1 id="typewriter-text"></h1>
+        </div>
         
         <button id="start-button" onclick="startQuiz()" class="hidden">START NOW</button>
     </div>
@@ -148,7 +152,7 @@
     </div>
 
     <script>
-        // --- JavaScript Logic (script.js contents) ---
+        // --- JavaScript Logic ---
         let currentQuestionIndex = 0;
 
         // --- Quiz Content ---
@@ -220,24 +224,31 @@
         const startButton = document.getElementById('start-button');
 
         // --- Initialization & Typewriter Effect ---
-        const initialMessage = "Let's see how well you know your pals... Knowing your pals is a key part of knowing the universe.";
+        // New line added using \n
+        const initialMessage = "Let's see how well you know your pals.\n\nKnowing your pals is a key part of knowing the universe.";
         
         function typeWriter(element, text, speed) {
             let i = 0;
             element.innerHTML = '';
-            // Reset CSS animation properties for immediate JS control
             element.style.animation = 'none'; 
-            startButton.classList.add('hidden'); // Hide button until text is done
+            startButton.classList.add('hidden'); 
+
+            // Convert \n to <br> for HTML rendering, but process character by character
+            const textToType = text.replace(/\n/g, '<br>');
 
             function type() {
                 if (i < text.length) {
-                    element.innerHTML += text.charAt(i);
+                    const char = text.charAt(i);
+                    if (char === '\n') {
+                        element.innerHTML += '<br>';
+                    } else {
+                        element.innerHTML += char;
+                    }
                     i++;
                     setTimeout(type, speed);
                 } else {
-                     // Add the blinking cursor animation after typing is complete
                     element.style.animation = 'blink-caret .75s step-end infinite'; 
-                    startButton.classList.remove('hidden'); // Show button when done
+                    startButton.classList.remove('hidden'); 
                 }
             }
             type();
@@ -256,7 +267,6 @@
 
             if (isFailure) {
                 alert("You are not worthy to continue if you do not know your pals well.");
-                // Re-trigger the typewriter effect for the message
                 typeWriter(typewriterElement, initialMessage, 50);
             }
         }
@@ -270,19 +280,17 @@
 
         // --- Load Question (Q1-Q9) ---
         function loadQuestion() {
-            // Check if Q10 (Match) needs to be loaded
             if (currentQuestionIndex === quizData.length) {
                 loadMatchQuestion();
                 return;
             }
 
-            // Hide Q10 interface if we're on Q1-Q9
             optionsContainer.classList.remove('hidden');
             matchContainer.classList.add('hidden');
 
             const currentQ = quizData[currentQuestionIndex];
             questionText.textContent = currentQ.question;
-            optionsContainer.innerHTML = ''; // Clear previous options
+            optionsContainer.innerHTML = ''; 
 
             currentQ.options.forEach(option => {
                 const button = document.createElement('button');
@@ -297,13 +305,13 @@
         function checkAnswer(selectedOption, correctAnswer) {
             if (selectedOption === correctAnswer) {
                 currentQuestionIndex++;
-                if (currentQuestionIndex > quizData.length) { // Check for completion after Q10
+                if (currentQuestionIndex > quizData.length) { 
                      showCompletionScreen();
                 } else {
                     loadQuestion();
                 }
             } else {
-                resetQuiz(true); // Incorrect answer resets the ENTIRE quiz
+                resetQuiz(true); 
             }
         }
 
@@ -312,14 +320,13 @@
             questionText.textContent = "Q10) Link the person to their profession/choice of discipline (Match the following).";
             optionsContainer.classList.add('hidden');
             matchContainer.classList.remove('hidden');
-            matchBody.innerHTML = ''; // Clear previous rows
+            matchBody.innerHTML = ''; 
 
             const persons = Object.keys(matchData);
             const disciplines = Object.values(matchData);
             
             // Function to shuffle an array
             function shuffleArray(array) {
-                // Creates a shallow copy so the original array is not modified
                 let newArray = [...array]; 
                 for (let i = newArray.length - 1; i > 0; i--) {
                     const j = Math.floor(Math.random() * (i + 1));
@@ -328,7 +335,6 @@
                 return newArray;
             }
 
-            // Shuffle the disciplines for the dropdown options
             const shuffledDisciplines = shuffleArray(disciplines);
 
             persons.forEach(person => {
@@ -342,7 +348,7 @@
                 const disciplineCell = row.insertCell();
                 const select = document.createElement('select');
                 select.className = 'dropdown-select';
-                select.setAttribute('data-person', person); // Store the person's name for checking
+                select.setAttribute('data-person', person); 
                 
                 // Add a default unselected option
                 const defaultOption = document.createElement('option');
@@ -372,17 +378,16 @@
                 const selectedDiscipline = select.value;
                 const correctDiscipline = matchData[person];
 
-                // Check if an option was selected AND if it matches the correct answer
                 if (selectedDiscipline === "" || selectedDiscipline !== correctDiscipline) {
                     allCorrect = false;
                 }
             });
 
             if (allCorrect) {
-                currentQuestionIndex++; // Move past Q10
+                currentQuestionIndex++; 
                 showCompletionScreen();
             } else {
-                resetQuiz(true); // Incorrect answer resets the ENTIRE quiz
+                resetQuiz(true); 
             }
         }
 
@@ -393,5 +398,4 @@
         }
     </script>
 </body>
-  </html>
-  
+</html>
