@@ -1,1 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Third Interaction: The Erudites</title>
+    <style>
+        /* --- 1. Base CSS for Aesthetic --- */
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            text-align: center;
+        }
 
+        #interaction-text {
+            white-space: pre-wrap; /* Allows text wrapping AND respects \n in the JS */
+            font-size: 1.2em;
+            opacity: 0;
+            border-right: 2px solid rgba(255, 255, 255, 0.75); /* Cursor */
+            animation: blink-caret .75s step-end infinite;
+            min-height: 1.5em; 
+            max-width: 800px;
+        }
+
+        /* Cursor Blinking Animation */
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: rgba(255, 255, 255, 0.75); }
+        }
+
+        /* --- 2. CSS for the Button --- */
+        #continue-button {
+            display: none; 
+            margin-top: 30px;
+            padding: 10px 20px;
+            background-color: transparent;
+            color: #fff;
+            border: 1px solid #fff; 
+            font-family: inherit;
+            font-size: 1em;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        #continue-button:hover {
+            background-color: #fff;
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+
+    <p id="interaction-text"></p>
+
+    <button id="continue-button" onclick="window.location.href='Puz3.html'">
+        Venture to the Next Trial
+    </button>
+
+    <script>
+        // The text is modified here: replace period and space with period, newline, and space (.\n )
+        const rawText = "Thus all stories fade, only to be reawakened by the same void that consumed us. But awakening the same stories also awakens the same rebellions of the people that pushed towards the rip of the fabric of galaxies. Thus were born the Erudites, the people who dedicated their lifes to the art of resistance and knowledge of the divine.";
+        
+        // This regex adds a newline after every period, ensuring the desired break.
+        const textToType = rawText.replace(/\.\s/g, '.\n\n'); 
+        
+        const element = document.getElementById('interaction-text');
+        const button = document.getElementById('continue-button');
+        
+        let charIndex = 0;
+        
+        function typeWriter() {
+            if (charIndex < textToType.length) {
+                // Get the next character or sequence
+                const nextChar = textToType.charAt(charIndex);
+                
+                // If it's a newline, use innerHTML to render the line break
+                if (nextChar === '\n') {
+                    element.innerHTML += '<br>';
+                } else {
+                    // Otherwise, append the character normally
+                    element.textContent += nextChar;
+                }
+
+                charIndex++;
+                setTimeout(typeWriter, 50); // Typing speed: 50ms
+            } else {
+                // Typing is complete
+                element.style.borderRight = 'none';
+                element.style.animation = 'none';
+                
+                // Display the button after a short delay (0.5s)
+                setTimeout(() => {
+                    button.style.display = 'block';
+                    button.style.opacity = '0';
+                    (function fadeIn() {
+                        let opacity = parseFloat(button.style.opacity);
+                        if (opacity < 1) {
+                            opacity += 0.05;
+                            button.style.opacity = opacity;
+                            setTimeout(fadeIn, 50);
+                        }
+                    })();
+                }, 500);
+            }
+        }
+
+        // Start the effect
+        element.style.opacity = '1';
+        typeWriter();
+    </script>
+</body>
+</html>
