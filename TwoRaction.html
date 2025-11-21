@@ -1,1 +1,159 @@
-TBD
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Second Interaction: The Fabric</title>
+    <style>
+        /* --- 1. Base CSS for Aesthetic --- */
+        body {
+            background-color: #000; /* Black background */
+            color: #fff; /* Plain white text */
+            font-family: 'Courier New', Courier, monospace; /* Monospaced font */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        #interaction-text {
+            white-space: pre-wrap;
+            font-size: 1.2em;
+            opacity: 0; /* Starts hidden for the typewriter effect */
+            border-right: 2px solid rgba(255, 255, 255, 0.75); /* Cursor */
+            animation: blink-caret .75s step-end infinite;
+            min-height: 1.5em; 
+            max-width: 800px;
+        }
+
+        /* Cursor Blinking Animation */
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: rgba(255, 255, 255, 0.75); }
+        }
+
+        /* --- 2. CSS for Glitchy Buzzwords --- */
+        .glitch {
+            /* Glitch effect relies on text shadows for the "shift" */
+            text-shadow: 
+                1px 0 0 red, 
+                -1px 0 0 blue;
+            animation: glitch-anim 1.5s infinite linear alternate;
+        }
+
+        /* The glitch animation slightly shifts the text shadows */
+        @keyframes glitch-anim {
+            0% {
+                text-shadow: 1px 0 0 red, -1px 0 0 blue;
+                transform: translate(0%);
+            }
+            20% {
+                text-shadow: 2px 0 0 red, -2px 0 0 blue;
+                transform: translate(-1%);
+            }
+            40% {
+                text-shadow: -1px 0 0 red, 1px 0 0 blue;
+                transform: translate(1%);
+            }
+            60% {
+                text-shadow: 1px 0 0 red, -1px 0 0 blue;
+                transform: translate(0%);
+            }
+            80% {
+                text-shadow: 2px 0 0 red, -2px 0 0 blue;
+                transform: translate(-0.5%);
+            }
+            100% {
+                text-shadow: -2px 0 0 red, 2px 0 0 blue;
+                transform: translate(0.5%);
+            }
+        }
+
+        /* --- 3. CSS for the Button --- */
+        #continue-button {
+            display: none; /* Starts hidden */
+            margin-top: 30px;
+            padding: 10px 20px;
+            background-color: transparent;
+            color: #fff;
+            border: 1px solid #fff; 
+            font-family: inherit;
+            font-size: 1em;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        #continue-button:hover {
+            background-color: #fff;
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+
+    <p id="interaction-text"></p>
+
+    <button id="continue-button" onclick="window.location.href='Puzzle2.html'">
+        Proceed to Second Puzzle
+    </button>
+
+    <script>
+        // Use HTML structure in the string to apply the glitch class
+        const textToType = 'The Universe began with an bang, and will end with a rip. Thus begins the cycle of life again, <span class="glitch">reiterating</span> life over and over, as the <span class="glitch">simulation</span> goes wary. The fabric fools everyone, yet it ceases to exist when it fools no one, forcing everyone to believe its lies yet again';
+        
+        const element = document.getElementById('interaction-text');
+        const button = document.getElementById('continue-button');
+        
+        let charIndex = 0;
+        
+        // This array holds the parts of the text (including the HTML tags)
+        const parts = textToType.match(/(<span.*?<\/span>)|[^<]/g) || [];
+
+        function typeWriter() {
+            if (charIndex < parts.length) {
+                let part = parts[charIndex];
+                
+                // If it's a character, add it to the text content
+                if (!part.startsWith('<')) {
+                    element.textContent += part;
+                } 
+                // If it's an HTML tag (the glitch span), insert it as innerHTML
+                else {
+                    element.innerHTML += part;
+                }
+
+                charIndex++;
+                setTimeout(typeWriter, 50); // Typing speed: 50ms
+            } else {
+                // Typing is complete
+                element.style.borderRight = 'none';
+                element.style.animation = 'none';
+                
+                // Display the button after a short delay (0.5s)
+                setTimeout(() => {
+                    button.style.display = 'block';
+                    button.style.opacity = '0';
+                    (function fadeIn() {
+                        let opacity = parseFloat(button.style.opacity);
+                        if (opacity < 1) {
+                            opacity += 0.05;
+                            button.style.opacity = opacity;
+                            setTimeout(fadeIn, 50);
+                        }
+                    })();
+                }, 500);
+            }
+        }
+
+        // Start the effect
+        element.style.opacity = '1';
+        typeWriter();
+    </script>
+</body>
+</html>
