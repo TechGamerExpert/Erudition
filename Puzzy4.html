@@ -1,1 +1,142 @@
-tBd
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fourth Challenge: Solar Azimuth</title>
+    <style>
+        /* Reusing the monospaced, dark aesthetic */
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 50px 20px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        /* Styling for the Asset Image Container */
+        .asset-container {
+            border: 3px solid #0ff; /* Cyan border for a navigational feel */
+            padding: 5px;
+            display: inline-block;
+            margin-bottom: 30px;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.5); /* Matching glow */
+        }
+        
+        #geoloco-asset {
+            max-width: 90vw; 
+            max-height: 400px; 
+            height: auto;
+            display: block;
+        }
+
+        /* Styling the Question and Input Area */
+        h2 {
+            font-size: 1.5em;
+            color: #eee;
+            margin-bottom: 25px;
+            text-align: center;
+            max-width: 600px;
+            line-height: 1.4;
+        }
+
+        #answer-input {
+            padding: 10px;
+            font-family: inherit;
+            font-size: 1.2em;
+            width: 80%;
+            max-width: 300px;
+            background-color: #111;
+            color: #fff; 
+            border: 1px solid #fff;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        #submit-button {
+            padding: 10px 20px;
+            background-color: transparent;
+            color: #fff; 
+            border: 1px solid #fff;
+            font-family: inherit;
+            font-size: 1em;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        #submit-button:hover {
+            background-color: #fff;
+            color: #000;
+        }
+
+        #message {
+            margin-top: 15px;
+            color: red;
+            font-size: 1em;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. The Asset Image Container -->
+    <div class="asset-container">
+        <!-- Using the path provided by the user -->
+        <img id="geoloco-asset" src="https://raw.githubusercontent.com/TechGamerExpert/Erudition/master/ASSETS/Geoloco/place.png" alt="Geolocational Picture for Azimuth Calculation">
+    </div>
+
+    <!-- 2. The Puzzle Question -->
+    <h2>
+        <span style="color: red;">EVALUATE THE LOCATION:</span><br>
+        To continue now, find the solar azimuth of the picture shown above.
+    </h2>
+
+    <!-- 3. Input Box and Submit -->
+    <input type="text" id="answer-input" placeholder="Enter Azimuth in Degrees">
+    <button id="submit-button" onclick="checkAnswer()">
+        CONTINUE
+    </button>
+    
+    <p id="message"></p>
+
+    <script>
+        function checkAnswer() {
+            // =========================================================================
+            // !!! PLACEHOLDER FOR CORRECT AZIMUTH ANSWER !!!
+            // Please replace '45' with the actual expected numerical azimuth value
+            const correctAnswer = '45'; 
+            // =========================================================================
+
+            // Get user input and sanitize it (removes spaces, converts to string, trims)
+            const userInput = String(document.getElementById('answer-input').value).trim();
+            const messageElement = document.getElementById('message');
+
+            // Simple comparison (using .toUpperCase() is skipped since the answer is a number)
+            if (userInput === correctAnswer) {
+                // Correct Answer Logic
+                messageElement.style.color = 'lime';
+                messageElement.textContent = "COORDINATE MATCH. THE DIVINE PATH IS CLEAR. PROCEEDING...";
+                
+                // Redirect to inter5.html
+                setTimeout(() => {
+                    window.location.href = "inter5.html"; 
+                }, 1500); 
+                
+            } else {
+                // Incorrect Answer Logic
+                messageElement.style.color = 'red';
+                messageElement.textContent = "AZIMUTH MISCALCULATED. RE-OBSERVE THE SHADOWS AND TIME STAMP (IF APPLICABLE).";
+                
+                document.getElementById('answer-input').value = ''; // Clear input for retry
+            }
+        }
+    </script>
+</body>
+</html>
