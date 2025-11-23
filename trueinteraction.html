@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Final Revelation: The True Erudition</title>
+    <style>
+        /* --- 1. Base CSS (Monospaced, Dark Theme) --- */
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            text-align: center;
+            overflow: hidden; 
+        }
+
+        /* --- 2. Typewriter Text Area --- */
+        #interaction-text {
+            white-space: pre-wrap; 
+            font-size: 1.5em; 
+            opacity: 0;
+            border-right: 2px solid rgba(255, 255, 255, 0.75); 
+            animation: blink-caret .75s step-end infinite;
+            min-height: 2em; 
+            max-width: 800px;
+            position: relative; 
+            z-index: 10;
+            line-height: 1.5;
+        }
+
+        /* Cursor Blinking Animation */
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: rgba(255, 255, 255, 0.75); }
+        }
+
+        /* --- 3. Enhanced Glitch Effect for Final Word --- */
+        .glitch {
+            font-weight: bold;
+            color: transparent; 
+            text-shadow: 
+                0 0 5px rgba(255, 255, 255, 0.8),
+                4px 0 0 red, 
+                -4px 0 0 blue;
+            animation: 
+                glitch-anim 0.3s cubic-bezier(.25,.46,.45,.94) both infinite alternate,
+                glitch-color 0.8s steps(2, end) infinite;
+            filter: blur(0.5px);
+            display: inline-block;
+        }
+
+        @keyframes glitch-anim {
+            0% { transform: skewX(0deg); text-shadow: 4px 0 0 red, -4px 0 0 blue; }
+            50% { transform: skewX(10deg); text-shadow: -2px 0 0 red, 2px 0 0 blue; }
+            100% { transform: skewX(-10deg); text-shadow: 6px 0 0 red, -6px 0 0 blue; }
+        }
+        
+        @keyframes glitch-color {
+            0% { color: #f0f; }
+            50% { color: #0ff; }
+            100% { color: #ff0; }
+        }
+
+        /* --- 4. Final Thank You Message (Faster Fade, Bigger Text) --- */
+        #thank-you-message {
+            position: absolute;
+            bottom: 50px;
+            font-size: 1.1em; /* Increased size */
+            color: #777;
+            opacity: 0;
+            transition: opacity 1s ease-in-out 1.5s; /* Faster transition (1s) and shorter delay (1.5s) */
+        }
+
+    </style>
+</head>
+<body>
+
+    <p id="interaction-text"></p>
+    
+    <div id="thank-you-message">
+        Thank you for participating in the Erudition. We hope the experience was fun for all &lt;3.<br>Meet you next Techiversary.
+    </div>
+
+    <script>
+        // --- FINAL TEXT (Corrected "true Erudition") ---
+        const textToType = "You have reached the end. <br><br>You have proven your worth. <br><br>As the God of Erudition, I shall crown you a true Erudite, by giving you the ultimate knowledge. <br><br>The fact is, true Erudition is not the path this is, but instead something else. <br><br>It is. <br><br><span id='glitch-word' class='glitch'>The N&pound;H{/)&sect;&times;</span>.<br><br>To be Continued.";
+        
+        // This splits the text into characters, <br> tags, and the <span> tag.
+        // NOTE: The 'glitch' class is now applied directly in the string for immediate effect.
+        const parts = textToType.match(/(<br><br>)|(<span.*?<\/span>)|[^<]/g) || [];
+        
+        const element = document.getElementById('interaction-text');
+        const thankYouMessage = document.getElementById('thank-you-message');
+        
+        let charIndex = 0;
+        
+        function typeWriter() {
+            if (charIndex < parts.length) {
+                const part = parts[charIndex];
+                
+                if (part === '<br><br>' || part.startsWith('<span')) {
+                    // Use insertAdjacentHTML to append HTML tags safely
+                    element.insertAdjacentHTML('beforeend', part); 
+                } else {
+                    // For characters, escape them and append safely
+                    const safeText = part.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                    element.insertAdjacentHTML('beforeend', safeText);
+                }
+
+                charIndex++;
+                setTimeout(typeWriter, 50); // Typing speed: 50ms
+            } else {
+                // Typing is complete
+                element.style.borderRight = 'none';
+                element.style.animation = 'none';
+                
+                // Trigger the Thank You message fade-in
+                setTimeout(() => {
+                    thankYouMessage.style.opacity = '1';
+                }, 300); // Wait 0.3 second after typing finishes
+            }
+        }
+
+        // Start the effect
+        element.style.opacity = '1';
+        typeWriter();
+    </script>
+</body>
+</html>
