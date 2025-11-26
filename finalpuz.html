@@ -1,1 +1,259 @@
-to continue to trueinteraction.html 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Final Trial: The Pillars of Erudition</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 50px 20px;
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        #puzzle-container {
+            max-width: 650px;
+            width: 100%;
+            border: 2px solid #ff0; /* Gold/Yellow border for finality */
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 0 20px rgba(255, 255, 0, 0.5);
+        }
+
+        #poem-display {
+            white-space: pre-wrap;
+            font-size: 1.1em;
+            margin-bottom: 25px;
+            line-height: 1.6;
+            transition: opacity 0.5s ease-in-out;
+            min-height: 350px; /* Ensures the container doesn't jump */
+            text-align: left;
+        }
+        
+        #poem-title {
+            color: #ff0;
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            text-align: center;
+            text-decoration: underline;
+        }
+
+        #answer-input {
+            padding: 10px;
+            font-family: inherit;
+            font-size: 1.2em;
+            width: 80%;
+            max-width: 300px;
+            background-color: #111;
+            color: #fff; 
+            border: 1px solid #ff0;
+            margin-bottom: 20px;
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        #submit-button {
+            padding: 10px 20px;
+            background-color: transparent;
+            color: #ff0; 
+            border: 1px solid #ff0;
+            font-family: inherit;
+            font-size: 1em;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        #submit-button:hover {
+            background-color: #ff0;
+            color: #000;
+        }
+
+        #message {
+            margin-top: 15px;
+            color: red;
+            font-size: 1em;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="puzzle-container">
+        <div id="poem-title"></div>
+        <div id="poem-display"></div>
+        
+        <input type="text" id="answer-input" placeholder="ENTER THE HIDDEN WORD">
+        <button id="submit-button" onclick="checkAnswer()">
+            SUBMIT VERDICT
+        </button>
+        
+        <p id="message"></p>
+    </div>
+
+    <script>
+        // --- PUZZLE DATA ---
+        // The return words and corresponding poems
+        const poems = [
+            {
+                title: "The First Pillar",
+                text: 
+                "As one says, the sun will set\n" +
+                "Yet for him, the day only awaits. \n" +
+                "Bright as the sun's ray, hard as a horse's hoove.\n" +
+                "Scorpions dangerous hands will also be of aloof.\n" +
+                "Lives like an iguana, or a platypus on land, \n" +
+                "Yet like them, they also have another strand. \n" +
+                "Amongst them all, lies this food,\n" +
+                "So ask the Pillar of Meat, what is his tasty mood?",
+                answer: "STEWED" // Returnword: Stewed
+            },
+            {
+                title: "The Second Pillar",
+                text: 
+                "Once the day draws, and the night grows eternal.\n" +
+                "The privileged one has no right to be hibernal. \n" +
+                "For he can't rest, the enemy hides,\n" +
+                "And the winter only makes it ice. \n\n" +
+                "Oh my emperor, Oh my praise,\n" +
+                "Why must thou be, nothing but brave?\n" +
+                "Oh my emperor, why must you save?\n" +
+                "Or will you in the end, go visit my grave?\n\n" +
+                "Amongst the public, the Pillar of the Crown looms. \n" +
+                "Go and ask him, does he play poker with his interests, or does he invoke doom?",
+                answer: "LAYS" // Returnword: Lays
+            },
+            {
+                title: "The Third Pillar",
+                text: 
+                "Once the night falls, the pillage starts to accrue.\n" +
+                "In the moon's glow, their wrath starts to brew.\n" +
+                "Why shall they pillage, for thy harm the citizens?\n" +
+                "The Monarch's replays could do nothing but blame.\n\n" +
+                "In this glow, the hymn grows stronger,\n" +
+                "Is the Monarch the one who is faltered? \n" +
+                "The silent pillager goes through graves, \n" +
+                "Their collection grows but remains untamed.\n\n" +
+                "It is now the future, the pillagers are worthless. \n" +
+                "The pillaged grow louder and they grow shamed.\n" +
+                "In their land, now new flowers bloom.\n" +
+                "From there, ask the Pillar of The Pillage, about their history,\n" +
+                "Or the state of their monarch's gloom.",
+                answer: "RESTS" // Returnword: Rests
+            },
+            {
+                title: "The Fourth Pillar",
+                text: 
+                "In the same moonlight, lay calm,\n" +
+                "Another story, another feeler.\n" +
+                "He is one, who is delighted, \n" +
+                "Vibrant, Snowy, or may you say blighted.\n\n" +
+                "Look back into old English, and find this claim,\n" +
+                "Out of two people you find, who is the one whose more sane?\n" +
+                "This adventure, only one time can tell, \n" +
+                "So let this protagonist, be one to acclaim. \n\n" +
+                "The Pillar of Delight, resting his soul,\n" +
+                "Let the moonlight make his glow.\n" +
+                "And as dawn arises, light graces him awake,\n" +
+                "Ask him for what, is his Champion of fate?",
+                answer: "COMPASSION" // Returnword: Compassion
+            },
+            {
+                title: "The Final Pillar",
+                text: 
+                "Many days pass, and nights too,\n" +
+                "Now on the void above, you see red amongst blue. \n" +
+                "The calm compassionate deity, is now ablaze,\n" +
+                "And underneath him lies only the craze. \n\n" +
+                "Amongst the mortals, lied a cat,\n" +
+                "Cunning in rage, his mighty hand. \n" +
+                "Usually he laid dormant upon his land,\n" +
+                "But this night, his slumber was not bland. \n\n" +
+                "The pillar of Rage, going amongst his ways,\n" +
+                "Under the crimson light, his meows grow louder,\n" +
+                "May you feed him a hotdog, or a taco,\n" +
+                "To reduce the blood's simmer?",
+                answer: "SANDWICH" // Returnword: Sandwich
+            }
+        ];
+
+        let currentPoemIndex = 0;
+        const poemDisplay = document.getElementById('poem-display');
+        const poemTitle = document.getElementById('poem-title');
+        const inputField = document.getElementById('answer-input');
+        const messageElement = document.getElementById('message');
+        const submitButton = document.getElementById('submit-button');
+
+        function loadPoem(index) {
+            if (index < poems.length) {
+                poemTitle.textContent = poems[index].title;
+                poemDisplay.textContent = poems[index].text;
+                poemDisplay.style.opacity = '1';
+                inputField.value = '';
+                messageElement.textContent = '';
+                submitButton.textContent = "SUBMIT VERDICT";
+            } else {
+                // All puzzles solved
+                poemTitle.textContent = "FINAL KNOWLEDGE ACQUIRED";
+                poemDisplay.textContent = "All Pillars have yielded their secrets. The ultimate truth awaits your return.";
+                
+                // Redirect to trueinteraction.html
+                submitButton.textContent = "RETURN TO THE GOD";
+                submitButton.onclick = () => {
+                     window.location.href = "trueinteraction.html";
+                };
+                
+                // Trigger the redirection immediately after a short delay
+                setTimeout(() => {
+                    window.location.href = "trueinteraction.html";
+                }, 2000); 
+            }
+        }
+
+        function checkAnswer() {
+            const currentPoem = poems[currentPoemIndex];
+            
+            // Auto strip spaces and convert to uppercase for easy checking
+            const userInput = inputField.value.replace(/\s/g, '').toUpperCase();
+            const correctAnswer = currentPoem.answer.replace(/\s/g, '').toUpperCase();
+
+            if (userInput === correctAnswer) {
+                // Correct Answer Logic
+                messageElement.style.color = 'lime';
+                messageElement.textContent = `Pillar ${currentPoemIndex + 1} Deciphered. Advancing...`;
+                
+                // Prepare for the next poem
+                currentPoemIndex++;
+                
+                // Fade out current poem
+                poemDisplay.style.opacity = '0';
+                
+                // Load the next poem after fade out
+                setTimeout(() => {
+                    loadPoem(currentPoemIndex);
+                }, 500); // Wait 500ms for fade out
+                
+            } else {
+                // Incorrect Answer Logic
+                messageElement.style.color = 'red';
+                messageElement.textContent = "THE PILLAR REMAINS SILENT. YOUR WORD IS INCORRECT.";
+                inputField.value = '';
+            }
+        }
+
+        // Initialize the first poem when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            loadPoem(currentPoemIndex);
+        });
+    </script>
+</body>
+</html>
+ 
